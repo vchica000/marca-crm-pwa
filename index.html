@@ -16,15 +16,14 @@
 </head>
 <body>
 
-<div id="loginScreen" class="login-screen">
-  <div class="login-box">
-    <div class="login-icon">™️</div>
+<div id="lockScreen" class="lock-screen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
     <h1>Marcas CRM</h1>
-    <p>Inicia sesión para ver tu tablero</p>
-    <input type="email" id="loginEmail" placeholder="Correo" autocomplete="username" />
-    <input type="password" id="loginPassword" placeholder="Contraseña" autocomplete="current-password" />
-    <button id="loginBtn" class="btn btn-primary">Entrar</button>
-    <p id="loginError" class="login-error hidden"></p>
+    <p>Ingresa tu clave</p>
+    <input type="password" id="lockInput" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="••••" />
+    <button id="lockBtn" class="btn btn-primary">Entrar</button>
+    <p id="lockError" class="lock-error hidden">Clave incorrecta, intenta de nuevo</p>
   </div>
 </div>
 
@@ -32,7 +31,6 @@
 
   <header class="topbar">
     <h1>™️ Marcas CRM</h1>
-    <button id="logoutBtn" class="btn-icon" aria-label="Salir">⏻</button>
   </header>
 
   <section class="dashboard">
@@ -127,7 +125,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script type="module" src="config.js"></script>
-<script type="module" src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

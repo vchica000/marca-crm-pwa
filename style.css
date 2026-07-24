@@ -33,8 +33,8 @@ button {
   border: none;
 }
 
-/* --- Login --- */
-.login-screen {
+/* --- Lock screen --- */
+.lock-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -43,7 +43,7 @@ button {
   padding: 24px;
 }
 
-.login-box {
+.lock-box {
   background: var(--card-bg);
   border-radius: 20px;
   padding: 32px 24px;
@@ -53,12 +53,12 @@ button {
   box-shadow: var(--shadow);
 }
 
-.login-icon { font-size: 40px; }
+.lock-icon { font-size: 40px; }
 
-.login-box h1 { margin: 8px 0 4px; font-size: 22px; }
-.login-box p { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+.lock-box h1 { margin: 8px 0 4px; font-size: 22px; }
+.lock-box p { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
 
-.login-box input {
+.lock-box input {
   width: 100%;
   padding: 12px 14px;
   margin-bottom: 12px;
@@ -67,9 +67,10 @@ button {
   font-size: 15px;
   background: var(--bg);
   color: var(--text);
+  text-align: center;
 }
 
-.login-error {
+.lock-error {
   color: var(--danger);
   font-size: 13px;
   margin-top: 10px;
@@ -91,18 +92,10 @@ button {
 
 .btn-danger { background: #fdeaea; color: var(--danger); }
 
-.btn-icon {
-  background: transparent;
-  color: #fff;
-  font-size: 20px;
-  padding: 6px 10px;
-}
-
 /* --- Topbar --- */
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 16px 18px;
   background: var(--primary);
   color: #fff;

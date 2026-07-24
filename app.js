@@ -1,7 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ---------- Datos base ----------
 
 const COLUMNAS = [
   { key: "interesado", label: "Interesado", color: "#4d8dff" },
@@ -22,55 +19,31 @@ const CANAL_ICONO = {
 
 const MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 
-let registros = [];
-let currentUserId = null;
+// ---------- Estado ----------
+
+const STORAGE_KEY = "marcas_registros_v1";
+
+let registros = cargarRegistros();
 let editingId = null;
 
+function cargarRegistros() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function guardarRegistros() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+}
+
+function nuevoId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
 const $ = (id) => document.getElementById(id);
-
-// ---------- Auth ----------
-
-async function init() {
-  const { data } = await supabase.auth.getSession();
-  if (data.session) {
-    onLoggedIn(data.session.user);
-  } else {
-    showLogin();
-  }
-}
-
-function showLogin() {
-  $("loginScreen").classList.remove("hidden");
-  $("app").classList.add("hidden");
-}
-
-async function onLoggedIn(user) {
-  currentUserId = user.id;
-  $("loginScreen").classList.add("hidden");
-  $("app").classList.remove("hidden");
-  buildBoard();
-  await loadRegistros();
-  subscribeRealtime();
-}
-
-$("loginBtn").addEventListener("click", async () => {
-  const email = $("loginEmail").value.trim();
-  const password = $("loginPassword").value;
-  $("loginError").classList.add("hidden");
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    $("loginError").textContent = "No pudimos entrar: " + error.message;
-    $("loginError").classList.remove("hidden");
-    return;
-  }
-  onLoggedIn(data.user);
-});
-
-$("logoutBtn").addEventListener("click", async () => {
-  await supabase.auth.signOut();
-  registros = [];
-  showLogin();
-});
 
 // ---------- Board ----------
 
@@ -95,36 +68,13 @@ function buildBoard() {
     Sortable.create(list, {
       group: "board",
       animation: 150,
-      onEnd: async (evt) => {
+      onEnd: (evt) => {
         const id = evt.item.dataset.id;
         const nuevaEtapa = evt.to.dataset.etapa;
-        await moverEtapa(id, nuevaEtapa);
+        moverEtapa(id, nuevaEtapa);
       },
     });
   });
-}
-
-async function loadRegistros() {
-  const { data, error } = await supabase
-    .from("registros")
-    .select("*")
-    .order("created_at", { ascending: true });
-  if (error) {
-    console.error(error);
-    return;
-  }
-  registros = data;
-  renderBoard();
-  renderDashboard();
-}
-
-function subscribeRealtime() {
-  supabase
-    .channel("registros-changes")
-    .on("postgres_changes", { event: "*", schema: "public", table: "registros" }, () => {
-      loadRegistros();
-    })
-    .subscribe();
 }
 
 function diasDesde(fechaStr) {
@@ -171,16 +121,19 @@ function renderBoard() {
   });
 
   document.querySelectorAll(".card-mover").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
+    btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      await moverEtapa(btn.dataset.id, btn.dataset.siguiente);
+      moverEtapa(btn.dataset.id, btn.dataset.siguiente);
     });
   });
 }
 
-async function moverEtapa(id, etapa) {
-  await supabase.from("registros").update({ etapa }).eq("id", id);
-  await loadRegistros();
+function moverEtapa(id, etapa) {
+  const r = registros.find((r) => r.id === id);
+  if (!r) return;
+  r.etapa = etapa;
+  guardarRegistros();
+  renderTodo();
 }
 
 function escapeHtml(str) {
@@ -226,6 +179,11 @@ function renderDashboard() {
   $("dashPendientesNombres").textContent = pendientes.map((r) => r.nombre_marca).join(", ");
 }
 
+function renderTodo() {
+  renderBoard();
+  renderDashboard();
+}
+
 // ---------- Modal: nueva marca ----------
 
 $("addBtn").addEventListener("click", () => {
@@ -236,19 +194,25 @@ $("addBtn").addEventListener("click", () => {
 
 $("nuevaCancelar").addEventListener("click", () => $("modalNueva").classList.add("hidden"));
 
-$("nuevaGuardar").addEventListener("click", async () => {
+$("nuevaGuardar").addEventListener("click", () => {
   const nombre_marca = $("nuevaNombre").value.trim();
   if (!nombre_marca) return;
-  const canal_contacto = $("nuevaCanal").value;
-  await supabase.from("registros").insert({
+  const hoy = new Date().toISOString().slice(0, 10);
+  registros.push({
+    id: nuevoId(),
     nombre_marca,
-    canal_contacto,
+    canal_contacto: $("nuevaCanal").value,
     etapa: "interesado",
-    user_id: currentUserId,
-    ultimo_contacto: new Date().toISOString().slice(0, 10),
+    pago_estado: false,
+    necesita_factura: false,
+    ultima_reunion: null,
+    ultimo_pago: null,
+    ultimo_contacto: hoy,
+    created_at: new Date().toISOString(),
   });
+  guardarRegistros();
   $("modalNueva").classList.add("hidden");
-  await loadRegistros();
+  renderTodo();
 });
 
 // ---------- Modal: editar ----------
@@ -268,36 +232,66 @@ function abrirEditar(r) {
 
 $("editCancelar").addEventListener("click", () => $("modalEditar").classList.add("hidden"));
 
-$("editGuardar").addEventListener("click", async () => {
-  await supabase
-    .from("registros")
-    .update({
-      canal_contacto: $("editCanal").value,
-      etapa: $("editEtapa").value,
-      pago_estado: $("editPago").checked,
-      necesita_factura: $("editFactura").checked,
-      ultima_reunion: $("editReunion").value || null,
-      ultimo_pago: $("editUltimoPago").value || null,
-      ultimo_contacto: $("editContacto").value || null,
-    })
-    .eq("id", editingId);
+$("editGuardar").addEventListener("click", () => {
+  const r = registros.find((r) => r.id === editingId);
+  if (!r) return;
+  r.canal_contacto = $("editCanal").value;
+  r.etapa = $("editEtapa").value;
+  r.pago_estado = $("editPago").checked;
+  r.necesita_factura = $("editFactura").checked;
+  r.ultima_reunion = $("editReunion").value || null;
+  r.ultimo_pago = $("editUltimoPago").value || null;
+  r.ultimo_contacto = $("editContacto").value || null;
+  guardarRegistros();
   $("modalEditar").classList.add("hidden");
-  await loadRegistros();
+  renderTodo();
 });
 
-$("editEliminar").addEventListener("click", async () => {
+$("editEliminar").addEventListener("click", () => {
   if (!confirm("¿Eliminar esta marca del tablero?")) return;
-  await supabase.from("registros").delete().eq("id", editingId);
+  registros = registros.filter((r) => r.id !== editingId);
+  guardarRegistros();
   $("modalEditar").classList.add("hidden");
-  await loadRegistros();
+  renderTodo();
 });
 
-// ---------- PWA ----------
+// ---------- Bloqueo con clave ----------
+
+const CLAVE_APP = "1993";
+const LOCK_KEY = "marcas_unlocked";
+
+function mostrarApp() {
+  $("lockScreen").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  buildBoard();
+  renderTodo();
+}
+
+function intentarDesbloquear() {
+  const input = $("lockInput");
+  if (input.value === CLAVE_APP) {
+    localStorage.setItem(LOCK_KEY, "1");
+    mostrarApp();
+  } else {
+    $("lockError").classList.remove("hidden");
+    input.value = "";
+    input.focus();
+  }
+}
+
+$("lockBtn").addEventListener("click", intentarDesbloquear);
+$("lockInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") intentarDesbloquear();
+});
+
+if (localStorage.getItem(LOCK_KEY) === "1") {
+  mostrarApp();
+}
+
+// ---------- PWA (offline) ----------
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("service-worker.js").catch(() => {});
   });
 }
-
-init();
