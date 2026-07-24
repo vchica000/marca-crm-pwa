@@ -1,12 +1,12 @@
 // ---------- Datos base ----------
 
 const COLUMNAS = [
-  { key: "interesado", label: "Interesado", color: "#4d8dff" },
-  { key: "pago", label: "Pago", color: "#ffb703" },
-  { key: "etapa1", label: "Etapa 1", color: "#ff6b6b" },
-  { key: "etapa2", label: "Etapa 2", color: "#8a5cf6" },
-  { key: "etapa3", label: "Etapa 3", color: "#06d6a0" },
-  { key: "etapa4", label: "Etapa 4", color: "#2a9d8f" },
+  { key: "interesado", label: "Interesado", color: "#c9a227", text: "#1a1408" },
+  { key: "pago", label: "Pago", color: "#7a1128", text: "#f2e9da" },
+  { key: "etapa1", label: "Etapa 1", color: "#1a1a1a", text: "#c9a227" },
+  { key: "etapa2", label: "Etapa 2", color: "#8f6b1f", text: "#1a1408" },
+  { key: "etapa3", label: "Etapa 3", color: "#4a0e1c", text: "#f2e9da" },
+  { key: "etapa4", label: "Etapa 4", color: "#2b2620", text: "#c9a227" },
 ];
 
 const CANAL_ICONO = {
@@ -54,7 +54,7 @@ function buildBoard() {
     const colEl = document.createElement("div");
     colEl.className = "column";
     colEl.innerHTML = `
-      <div class="column-header" style="background:${col.color}">
+      <div class="column-header" style="background:${col.color};color:${col.text}">
         <span>${col.label}</span>
         <span class="column-count" id="count-${col.key}">0</span>
       </div>
@@ -97,6 +97,9 @@ function renderBoard() {
     const items = registros.filter((r) => r.etapa === col.key);
     $(`count-${col.key}`).textContent = items.length;
     list.innerHTML = "";
+    if (items.length === 0) {
+      list.innerHTML = `<div class="column-empty">Sin marcas aquí todavía</div>`;
+    }
     items.forEach((r) => {
       const idxSiguiente = COLUMNAS.findIndex((c) => c.key === col.key) + 1;
       const siguiente = COLUMNAS[idxSiguiente];
