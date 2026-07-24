@@ -1,0 +1,25 @@
+{
+  "name": "Marcas CRM",
+  "short_name": "Marcas CRM",
+  "description": "Seguimiento de procesos de registro de marca",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f4fb",
+  "theme_color": "#ff6b6b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

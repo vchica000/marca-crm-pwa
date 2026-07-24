@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Marcas CRM</title>
+
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#ff6b6b" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Marcas CRM" />
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="login-icon">™️</div>
+    <h1>Marcas CRM</h1>
+    <p>Inicia sesión para ver tu tablero</p>
+    <input type="email" id="loginEmail" placeholder="Correo" autocomplete="username" />
+    <input type="password" id="loginPassword" placeholder="Contraseña" autocomplete="current-password" />
+    <button id="loginBtn" class="btn btn-primary">Entrar</button>
+    <p id="loginError" class="login-error hidden"></p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+
+  <header class="topbar">
+    <h1>™️ Marcas CRM</h1>
+    <button id="logoutBtn" class="btn-icon" aria-label="Salir">⏻</button>
+  </header>
+
+  <section class="dashboard">
+    <div class="dash-card">
+      <span class="dash-label">Interesados por mes</span>
+      <div id="dashInteresadosMes" class="dash-meses"></div>
+    </div>
+    <div class="dash-card dash-card-highlight">
+      <span class="dash-label">Procesos activos</span>
+      <span id="dashActivos" class="dash-number">0</span>
+    </div>
+    <div class="dash-card dash-card-warning">
+      <span class="dash-label">Pendientes de pago</span>
+      <span id="dashPendientesNum" class="dash-number">0</span>
+      <div id="dashPendientesNombres" class="dash-nombres"></div>
+    </div>
+  </section>
+
+  <main class="board" id="board">
+    <!-- las columnas se generan en app.js -->
+  </main>
+
+  <button id="addBtn" class="fab" aria-label="Agregar marca">+</button>
+
+</div>
+
+<!-- Modal: nueva marca -->
+<div id="modalNueva" class="modal-overlay hidden">
+  <div class="modal">
+    <h2>Nueva marca interesada</h2>
+    <label>Nombre de la marca</label>
+    <input type="text" id="nuevaNombre" placeholder="Ej: Café Andino" />
+    <label>¿Por dónde escribió?</label>
+    <select id="nuevaCanal">
+      <option value="whatsapp">WhatsApp</option>
+      <option value="llamada">Llamada</option>
+      <option value="correo">Correo</option>
+      <option value="instagram">Instagram</option>
+      <option value="otro">Otro</option>
+    </select>
+    <div class="modal-actions">
+      <button id="nuevaCancelar" class="btn btn-secondary">Cancelar</button>
+      <button id="nuevaGuardar" class="btn btn-primary">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: editar tarjeta -->
+<div id="modalEditar" class="modal-overlay hidden">
+  <div class="modal">
+    <h2 id="editarTitulo">Marca</h2>
+
+    <label>Canal de contacto</label>
+    <select id="editCanal">
+      <option value="whatsapp">WhatsApp</option>
+      <option value="llamada">Llamada</option>
+      <option value="correo">Correo</option>
+      <option value="instagram">Instagram</option>
+      <option value="otro">Otro</option>
+    </select>
+
+    <label>Etapa</label>
+    <select id="editEtapa">
+      <option value="interesado">Interesado</option>
+      <option value="pago">Pago</option>
+      <option value="etapa1">Etapa 1</option>
+      <option value="etapa2">Etapa 2</option>
+      <option value="etapa3">Etapa 3</option>
+      <option value="etapa4">Etapa 4</option>
+    </select>
+
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="editPago" /> Ya pagó</label>
+      <label><input type="checkbox" id="editFactura" /> Necesita factura electrónica</label>
+    </div>
+
+    <label>Última reunión</label>
+    <input type="date" id="editReunion" />
+
+    <label>Último pago</label>
+    <input type="date" id="editUltimoPago" />
+
+    <label>Último contacto</label>
+    <input type="date" id="editContacto" />
+
+    <div class="modal-actions">
+      <button id="editEliminar" class="btn btn-danger">Eliminar</button>
+      <button id="editCancelar" class="btn btn-secondary">Cerrar</button>
+      <button id="editGuardar" class="btn btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script type="module" src="config.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
