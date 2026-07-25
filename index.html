@@ -33,6 +33,11 @@
     <h1>™️ Marcas CRM</h1>
   </header>
 
+  <section class="search-bar">
+    <input type="text" id="buscarInput" placeholder="🔍 Buscar por marca o nombre de quien escribió..." />
+  </section>
+  <div id="buscarResultados" class="search-results hidden"></div>
+
   <section class="dashboard">
     <div class="dash-card">
       <span class="dash-label">Interesados por mes</span>
@@ -65,6 +70,10 @@
     <h2>Nueva marca interesada</h2>
     <label>Nombre de la marca</label>
     <input type="text" id="nuevaNombre" placeholder="Ej: Café Andino" />
+    <label>Nombre de quien escribió</label>
+    <input type="text" id="nuevaContactoNombre" placeholder="Ej: Juliana Pérez" />
+    <label>Número de WhatsApp (opcional)</label>
+    <input type="tel" id="nuevaTelefono" placeholder="Ej: 300 123 4567" />
     <label>¿Por dónde escribió?</label>
     <select id="nuevaCanal">
       <option value="whatsapp">WhatsApp</option>
@@ -84,6 +93,12 @@
 <div id="modalEditar" class="modal-overlay hidden">
   <div class="modal">
     <h2 id="editarTitulo">Marca</h2>
+
+    <label>Nombre de quien escribió</label>
+    <input type="text" id="editContactoNombre" placeholder="Ej: Juliana Pérez" />
+
+    <label>Número de WhatsApp (opcional)</label>
+    <input type="tel" id="editTelefono" placeholder="Ej: 300 123 4567" />
 
     <label>Canal de contacto</label>
     <select id="editCanal">

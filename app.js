@@ -108,6 +108,7 @@ function renderBoard() {
       card.dataset.id = r.id;
       card.innerHTML = `
         <div class="card-nombre">${escapeHtml(r.nombre_marca)}</div>
+        ${r.nombre_contacto ? `<div class="card-contacto">${escapeHtml(r.nombre_contacto)}${r.telefono ? " · " + escapeHtml(r.telefono) : ""}</div>` : ""}
         <div class="card-meta">
           <span class="badge">${CANAL_ICONO[r.canal_contacto] || r.canal_contacto}</span>
           ${r.pago_estado ? '<span class="badge badge-pago">Pagó ✅</span>' : (col.key === "pago" ? '<span class="badge badge-nopago">No pagó ❌</span>' : "")}
@@ -187,11 +188,60 @@ function renderTodo() {
   renderDashboard();
 }
 
+// ---------- Búsqueda ----------
+
+function etapaLabel(key) {
+  const col = COLUMNAS.find((c) => c.key === key);
+  return col ? col.label : key;
+}
+
+function buscar(query) {
+  const resultados = $("buscarResultados");
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    resultados.classList.add("hidden");
+    resultados.innerHTML = "";
+    return;
+  }
+  const coincidencias = registros.filter(
+    (r) =>
+      r.nombre_marca.toLowerCase().includes(q) ||
+      (r.nombre_contacto && r.nombre_contacto.toLowerCase().includes(q))
+  );
+  resultados.classList.remove("hidden");
+  if (coincidencias.length === 0) {
+    resultados.innerHTML = `<div class="search-result-empty">Sin resultados para "${escapeHtml(query)}"</div>`;
+    return;
+  }
+  resultados.innerHTML = coincidencias
+    .map(
+      (r) => `
+      <div class="search-result-item" data-id="${r.id}">
+        <div class="search-result-nombre">${escapeHtml(r.nombre_marca)} · ${etapaLabel(r.etapa)}</div>
+        <div class="search-result-meta">
+          ${r.nombre_contacto ? `👤 ${escapeHtml(r.nombre_contacto)}` : "👤 sin nombre registrado"}
+          ${r.telefono ? ` · 📞 ${escapeHtml(r.telefono)}` : ""}
+        </div>
+      </div>`
+    )
+    .join("");
+  resultados.querySelectorAll(".search-result-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      const r = registros.find((r) => r.id === item.dataset.id);
+      if (r) abrirEditar(r);
+    });
+  });
+}
+
+$("buscarInput").addEventListener("input", (e) => buscar(e.target.value));
+
 // ---------- Modal: nueva marca ----------
 
 $("addBtn").addEventListener("click", () => {
   $("nuevaNombre").value = "";
   $("nuevaCanal").value = "whatsapp";
+  $("nuevaContactoNombre").value = "";
+  $("nuevaTelefono").value = "";
   $("modalNueva").classList.remove("hidden");
 });
 
@@ -204,6 +254,8 @@ $("nuevaGuardar").addEventListener("click", () => {
   registros.push({
     id: nuevoId(),
     nombre_marca,
+    nombre_contacto: $("nuevaContactoNombre").value.trim(),
+    telefono: $("nuevaTelefono").value.trim(),
     canal_contacto: $("nuevaCanal").value,
     etapa: "interesado",
     pago_estado: false,
@@ -223,6 +275,8 @@ $("nuevaGuardar").addEventListener("click", () => {
 function abrirEditar(r) {
   editingId = r.id;
   $("editarTitulo").textContent = r.nombre_marca;
+  $("editContactoNombre").value = r.nombre_contacto || "";
+  $("editTelefono").value = r.telefono || "";
   $("editCanal").value = r.canal_contacto;
   $("editEtapa").value = r.etapa;
   $("editPago").checked = r.pago_estado;
@@ -238,6 +292,8 @@ $("editCancelar").addEventListener("click", () => $("modalEditar").classList.add
 $("editGuardar").addEventListener("click", () => {
   const r = registros.find((r) => r.id === editingId);
   if (!r) return;
+  r.nombre_contacto = $("editContactoNombre").value.trim();
+  r.telefono = $("editTelefono").value.trim();
   r.canal_contacto = $("editCanal").value;
   r.etapa = $("editEtapa").value;
   r.pago_estado = $("editPago").checked;

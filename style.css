@@ -109,6 +109,55 @@ button {
 
 .topbar h1 { font-size: 18px; margin: 0; letter-spacing: 0.3px; }
 
+/* --- Búsqueda --- */
+.search-bar {
+  padding: 14px 14px 0;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.search-results {
+  margin: 10px 14px 0;
+  background: var(--card-bg);
+  border: 1px solid var(--primary-dark);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.search-result-item {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.search-result-item:last-child { border-bottom: none; }
+
+.search-result-nombre {
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.search-result-meta {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.search-result-empty {
+  padding: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
 /* --- Dashboard --- */
 .dashboard {
   display: flex;
@@ -251,8 +300,14 @@ button {
 .card-nombre {
   font-weight: 600;
   font-size: 14px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   color: var(--text);
+}
+
+.card-contacto {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
 }
 
 .card-meta {
