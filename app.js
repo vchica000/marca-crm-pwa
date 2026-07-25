@@ -19,6 +19,12 @@ const CANAL_ICONO = {
 
 const MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 
+const FORMA_PAGO_LABEL = {
+  opcion1: "Opción 1",
+  opcion2: "Opción 2",
+  opcion3: "Opción 3",
+};
+
 // ---------- Estado ----------
 
 const STORAGE_KEY = "marcas_registros_v1";
@@ -99,6 +105,7 @@ function renderBoard() {
         <div class="card-meta">
           <span class="badge">${CANAL_ICONO[r.canal_contacto] || r.canal_contacto}</span>
           ${r.pago_estado ? '<span class="badge badge-pago">Pagó ✅</span>' : (col.key === "pago" ? '<span class="badge badge-nopago">No pagó ❌</span>' : "")}
+          ${r.forma_pago ? `<span class="badge">💳 ${FORMA_PAGO_LABEL[r.forma_pago]}</span>` : ""}
           ${seguimientoBadge(r)}
         </div>
         ${siguiente ? `<button class="card-mover" data-id="${r.id}" data-siguiente="${siguiente.key}">Mover a ${siguiente.label} →</button>` : ""}
@@ -247,6 +254,7 @@ $("nuevaGuardar").addEventListener("click", () => {
     etapa: "interesado",
     pago_estado: false,
     necesita_factura: false,
+    forma_pago: null,
     ultima_reunion: null,
     ultimo_pago: null,
     ultimo_contacto: hoy,
@@ -268,6 +276,7 @@ function abrirEditar(r) {
   $("editEtapa").value = r.etapa;
   $("editPago").checked = r.pago_estado;
   $("editFactura").checked = r.necesita_factura;
+  $("editFormaPago").value = r.forma_pago || "";
   $("editReunion").value = r.ultima_reunion || "";
   $("editUltimoPago").value = r.ultimo_pago || "";
   $("editContacto").value = r.ultimo_contacto || "";
@@ -285,6 +294,7 @@ $("editGuardar").addEventListener("click", () => {
   r.etapa = $("editEtapa").value;
   r.pago_estado = $("editPago").checked;
   r.necesita_factura = $("editFactura").checked;
+  r.forma_pago = $("editFormaPago").value || null;
   r.ultima_reunion = $("editReunion").value || null;
   r.ultimo_pago = $("editUltimoPago").value || null;
   r.ultimo_contacto = $("editContacto").value || null;
