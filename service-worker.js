@@ -1,4 +1,4 @@
-const CACHE_NAME = "marcas-crm-cache-v4";
+const CACHE_NAME = "marcas-crm-cache-v5";
 const ARCHIVOS = [
   "./",
   "./index.html",

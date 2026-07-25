@@ -219,40 +219,18 @@ button {
 }
 
 /* --- Board --- */
-.board-wrap {
-  position: relative;
-}
-
-.board-wrap::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 28px;
-  background: linear-gradient(to right, transparent, var(--bg));
-  pointer-events: none;
-}
-
 .board {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   padding: 0 14px 40px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
 }
 
 .column {
-  flex: 0 0 72vw;
-  max-width: 240px;
-  scroll-snap-align: start;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  max-height: min(60vh, 460px);
 }
 
 .column-header {
@@ -273,10 +251,7 @@ button {
 }
 
 .column-list {
-  flex: 1;
   padding: 10px;
-  overflow-y: auto;
-  min-height: 60px;
 }
 
 .column-empty {
@@ -294,8 +269,6 @@ button {
   margin-bottom: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
-
-.card:active { cursor: grabbing; }
 
 .card-nombre {
   font-weight: 600;
@@ -342,8 +315,6 @@ button {
   color: var(--primary);
   font-weight: 600;
 }
-
-.sortable-ghost { opacity: 0.4; }
 
 /* --- FAB --- */
 .fab {
@@ -427,7 +398,6 @@ button {
 }
 
 @media (min-width: 700px) {
-  .column { flex: 0 0 260px; }
   .dashboard { overflow-x: visible; }
-  .board-wrap::after { display: none; }
+  .board { max-width: 560px; margin: 0 auto; }
 }

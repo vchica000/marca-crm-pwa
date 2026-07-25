@@ -62,19 +62,6 @@ function buildBoard() {
     `;
     board.appendChild(colEl);
   });
-
-  COLUMNAS.forEach((col) => {
-    const list = $(`list-${col.key}`);
-    Sortable.create(list, {
-      group: "board",
-      animation: 150,
-      onEnd: (evt) => {
-        const id = evt.item.dataset.id;
-        const nuevaEtapa = evt.to.dataset.etapa;
-        moverEtapa(id, nuevaEtapa);
-      },
-    });
-  });
 }
 
 function diasDesde(fechaStr) {
